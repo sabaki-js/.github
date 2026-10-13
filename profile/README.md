@@ -27,6 +27,12 @@ const r = sabaki.decide({ state: "Refund not received, cancel my plan" });
 
 ## HTTP server (Jev-compatible `/v1/systemone`)
 
+> [!WARNING]
+> Compatibility is **shape-level only**: unlike Jev/Laya, sabaki answers with
+> the plugin's trained primary question under the requested name (arbitrary
+> criteria are not read by the model). True open-question answering awaits
+> the WIP Laya distillation (`base` mode).
+
 `sabaki serve` answers typed questions over HTTP — same shape as TypeSafe Jev,
 backed by mini ONNX models with nano fallback, lazy-loaded per domain:
 
