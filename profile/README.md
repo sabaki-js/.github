@@ -24,6 +24,27 @@ const r = sabaki.decide({ state: "Refund not received, cancel my plan" });
 | [@sabaki-js/plugin-template](https://github.com/sabaki-js/plugin-template) | starter template |
 
 
+
+## HTTP server (Jev-compatible `/v1/systemone`)
+
+`sabaki serve` answers typed questions over HTTP — same shape as TypeSafe Jev,
+backed by mini ONNX models with nano fallback, lazy-loaded per domain:
+
+```sh
+curl localhost:8001/v1/systemone -H 'content-type: application/json' -d '{
+  "state": "Charged twice, refund the duplicate today.",
+  "questions": {
+    "department": {"type": "choice", "instruct": "Which team?",
+      "criteria": {"billing": "payments, refunds", "technical": "bugs"}},
+    "urgency": {"type": "score", "criteria": ["low", "soon", "blocking"]},
+    "churn_risk": {"type": "noul", "instruct": "Threatens to leave?"}
+  }}'
+```
+
+You define the questions **and** the answer types: `choice` (options),
+`score` (ordered levels), `noul` (yes/no probability). New schemas need no
+retraining — just different questions, like Laya's option scorer.
+
 ## Benchmarks (typed-decisions, test split)
 
 Our `nano` plugins vs published reference scores (same dataset, all questions):
