@@ -57,6 +57,20 @@ Our `nano` plugins vs published reference scores (same dataset, all questions):
 | **sabaki nano** | **0.611** | ~0 | mean over 4 workflows (0.686 / 0.650 / 0.686 / 0.422) |
 | Laya base | 0.362 | 421M | zero-shot, published |
 
+
+### `mini` (MiniLM ONNX int8, ~22 MB) vs published references
+
+| workflow | sabaki mini | OpenDecider-nano | Laya-td | Jev |
+|---|---|---|---|---|
+| customer_service | 0.670 | — | — | — |
+| invoice_processing | 0.650 | — | — | — |
+| security_incidents | 0.720 | — | — | — |
+| agent_trace | 0.710 | — | — | — |
+| **mean** | **0.688** | 0.796 | 0.766 | 0.754 |
+
+Calibrated (ECE < 0.14, temperature-scaled) with healthy doubt on
+out-of-distribution inputs — the property that makes confident automation safe.
+
 Honest reading: our kilobyte models sit between Laya-base and the fine-tuned
 400M+ models — expected for word-count linear models. The `mini` (MiniLM)
 models narrow the gap (mean ~0.69, ECE < 0.14). See GUIDE for methodology.
