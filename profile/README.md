@@ -44,6 +44,20 @@ curl localhost:8001/v1/systemone -H 'content-type: application/json' -d '{
 You define the questions **and** the answer types: `choice` (options),
 `score` (ordered levels), `noul` (yes/no probability). New schemas need no
 retraining — just different questions, like Laya's option scorer.
+The server answers any question name with the plugin's primary question
+(Jev-style: ask `department`, get the `category` decision).
+
+### Automatic classification (act on confidence)
+
+```ts
+import { Sabaki } from "sabaki";
+const r = await sabaki.decideAsync({ state: ticket });
+if (r.domain !== "unknown" && r.confidence > 0.8) {
+  await autoRoute(r); // calibrated confidences make this safe
+} else {
+  await escalateToHuman(r); // unsure cases go to a person
+}
+```
 
 ## Benchmarks (typed-decisions, test split)
 
