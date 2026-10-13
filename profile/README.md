@@ -41,6 +41,14 @@ curl localhost:8001/v1/systemone -H 'content-type: application/json' -d '{
   }}'
 ```
 
+Response:
+
+```json
+{"model": "sabaki-mini", "answers": {
+  "department": {"type": "choice", "choice": "billing",
+    "probabilities": {"billing": 0.43}, "confidence": 0.43}}}
+```
+
 You define the questions **and** the answer types: `choice` (options),
 `score` (ordered levels), `noul` (yes/no probability). New schemas need no
 retraining — just different questions, like Laya's option scorer.
