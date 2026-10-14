@@ -110,6 +110,10 @@ dominate accuracy past ~0.7: `mini` answers 1000× faster than a GPU-bound
 model for a few points less. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom):
 the same `mini` stack plays MAP01 end-to-end on CPU (video in repo).
 
+Measured throughput (1 thread, `bench_throughput.mjs`): `nano` ~18 000 req/s
+(i5) / ~12 000 (Xeon); `mini` ~71 req/s (i5) / ~73 (Xeon) — a 35 Hz game tick
+fits in real time on any CPU.
+
 Honest reading: our kilobyte models sit between Laya-base and the fine-tuned
 400M+ models — expected for word-count linear models. The `mini` (MiniLM)
 models narrow the gap (mean ~0.69, ECE < 0.14). See GUIDE for methodology.
