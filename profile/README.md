@@ -20,7 +20,7 @@ const r = sabaki.decide({ state: "Refund not received, cancel my plan" });
 | [@sabaki-js/security-incidents](https://github.com/sabaki-js/plugin-security-incidents) | triage (disposition 0.73) |
 | [@sabaki-js/agent-trace-observability](https://github.com/sabaki-js/plugin-agent-trace-observability) | agent traces |
 | [@sabaki-js/mail](https://github.com/sabaki-js/plugin-mail) | email triage (8 buckets, 0.889) |
-| [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom) | Doom decisions (WIP) |
+| [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom) | Doom decisions (MAP01 exits on video) |
 | [@sabaki-js/plugin-template](https://github.com/sabaki-js/plugin-template) | starter template |
 
 
@@ -98,6 +98,17 @@ Our `nano` plugins vs published reference scores (same dataset, all questions):
 
 Calibrated (ECE < 0.14, temperature-scaled) with healthy doubt on
 out-of-distribution inputs — the property that makes confident automation safe.
+
+### Why `mini` instead of a 400M+ model
+
+Same test splits, but a different operating point: ~22 MB int8, ~20 ms on
+desktop CPU, zero dependencies beyond `onnxruntime-node`, no GPU, no API key,
+no per-call cost. The 400M+ references need a GPU to be usable — Laya's ONNX
+export was evaluated for CPU use and disqualified (~25 s/state). For
+high-frequency decisions (a game tick, a triage queue), latency and cost
+dominate accuracy past ~0.7: `mini` answers 1000× faster than a GPU-bound
+model for a few points less. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom):
+the same `mini` stack plays MAP01 end-to-end on CPU (video in repo).
 
 Honest reading: our kilobyte models sit between Laya-base and the fine-tuned
 400M+ models — expected for word-count linear models. The `mini` (MiniLM)
