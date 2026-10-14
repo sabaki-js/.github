@@ -82,20 +82,20 @@ Our `nano` plugins vs published reference scores (same dataset, all questions):
 | OpenDecider-nano | 0.796 | 400M | fine-tuned, published |
 | TypeSafe Jev | 0.754 | API | zero-shot, published |
 | Laya typed-decisions | 0.766 | 421M | fine-tuned, published |
-| **sabaki mini** | **0.636** | 22M | int8 ONNX, mean over 4 workflows, CPU ~70 req/s |
+| **sabaki mini** | **0.636 / 0.686** | 22M / 90M | int8 / fp32 ONNX, mean over 4 workflows, CPU ~70 req/s |
 | **sabaki nano** | **0.611** | ~0 | mean over 4 workflows (0.686 / 0.650 / 0.686 / 0.422) |
 | Laya base | 0.362 | 421M | zero-shot, published |
 
 
 ### `mini` (MiniLM ONNX int8, ~22 MB) vs published references
 
-| workflow | sabaki mini | OpenDecider-nano | Laya-td | Jev |
-|---|---|---|---|---|
-| customer_service | 0.656 | — | — | — |
-| invoice_processing | 0.556 | — | — | — |
-| security_incidents | 0.686 | — | — | — |
-| agent_trace | 0.648 | — | — | — |
-| **mean** | **0.636** | 0.796 | 0.766 | 0.754 |
+| workflow | sabaki mini fp32 | sabaki mini int8 | OpenDecider-nano | Laya-td | Jev |
+|---|---|---|---|---|---|
+| customer_service | 0.670 | 0.656 | — | — | — |
+| invoice_processing | 0.654 | 0.556 | — | — | — |
+| security_incidents | 0.716 | 0.686 | — | — | — |
+| agent_trace | 0.702 | 0.648 | — | — | — |
+| **mean** | **0.686** | **0.636** | 0.796 | 0.766 | 0.754 |
 
 Calibrated (ECE < 0.14, temperature-scaled) with healthy doubt on
 out-of-distribution inputs — the property that makes confident automation safe.
