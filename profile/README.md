@@ -2,121 +2,61 @@
 
 # sabaki-js
 
-Lightweight **typed-decision** AI for Node.js: route states to tiny classifiers that answer with calibrated probabilities — milliseconds on CPU, zero API.
+**Typed decisions on CPU, in milliseconds — Jev-compatible, plugin-routed, open.**
+
+Sabaki routes an unstructured state to the right tiny classifier and returns a **typed answer** (`choice` / `score` / `noul`) with calibrated confidence — over an HTTP API that speaks the [System One](https://docs.typesafe.ai/concepts/system-one) contract. No GPU, no API key, no per-call cost.
 
 ```ts
 import { Sabaki } from "sabaki";
-const r = sabaki.decide({ state: "Refund not received, cancel my plan" });
-// { domain: "customer_service", decision: "billing", confidence: 0.93 }
+import mail from "@sabaki-js/mail";
+
+const sabaki = new Sabaki().register(mail).setFallback(generalist);
+await sabaki.decideAsync({ state: "Invoice charged twice, need a refund", question: "bucket" });
+// { decision: "billing", confidence: 0.89, domain: "mail", plugin: "@sabaki-js/mail" }
 ```
+
+Live: `https://sabaki.fox3000foxy.com/v1/systemone` — try the [GUIDE](https://github.com/sabaki-js/sabaki/blob/main/GUIDE.md).
 
 ## Packages
 
 | package | what |
 |---|---|
-| [sabaki](https://github.com/sabaki-js/sabaki) | router core (`nano`/`mini`/`base`) |
-| [@sabaki-js/customer-service](https://github.com/sabaki-js/plugin-customer-service) | tickets (category 0.900) |
+| [sabaki](https://github.com/sabaki-js/sabaki) | router core + generalist fallback + Jev shapes |
+| [@sabaki-js/customer-service](https://github.com/sabaki-js/plugin-customer-service) | tickets (category 0.900 nano) |
 | [@sabaki-js/invoice-processing](https://github.com/sabaki-js/plugin-invoice-processing) | invoices (duplicate 0.89) |
 | [@sabaki-js/security-incidents](https://github.com/sabaki-js/plugin-security-incidents) | triage (disposition 0.73) |
 | [@sabaki-js/agent-trace-observability](https://github.com/sabaki-js/plugin-agent-trace-observability) | agent traces |
 | [@sabaki-js/mail](https://github.com/sabaki-js/plugin-mail) | email triage (8 buckets, 0.889) |
 | [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom) | Doom decisions (MAP01 exits on video) |
+| [@sabaki-js/generalist](https://github.com/sabaki-js/workspace) | open questions (cross-encoder, in core) |
 | [@sabaki-js/plugin-template](https://github.com/sabaki-js/plugin-template) | starter template |
 
+## How it decides
 
-
-## HTTP server (Jev-compatible `/v1/systemone`)
-
-> [!WARNING]
-> Compatibility is **shape-level only**: unlike Jev/Laya, sabaki answers with
-> the plugin's trained primary question under the requested name (arbitrary
-> criteria are not read by the model). True open-question answering awaits
-> the WIP Laya distillation (`base` mode).
-
-`sabaki serve` answers typed questions over HTTP — same shape as TypeSafe Jev,
-backed by mini ONNX models with nano fallback, lazy-loaded per domain:
-
-```sh
-curl localhost:8001/v1/systemone -H 'content-type: application/json' -d '{
-  "state": "Charged twice, refund the duplicate today.",
-  "questions": {
-    "department": {"type": "choice", "instruct": "Which team?",
-      "criteria": {"billing": "payments, refunds", "technical": "bugs"}},
-    "urgency": {"type": "score", "criteria": ["low", "soon", "blocking"]},
-    "churn_risk": {"type": "noul", "instruct": "Threatens to leave?"}
-  }}'
+```mermaid
+flowchart LR
+    A[state + questions] --> B{route()\nkeyword score\n>= threshold?}
+    B -- specialist wins --> C[nano <1ms\nor mini ~20ms]
+    B -- unknown --> D[generalist fallback\nruntime-defined questions]
+    C --> E["Jev answers\nchoice / score / noul"]
+    D --> E
+    E --> F["/v1/systemone\n{model, answers, usage}"]
 ```
 
-Response:
+Specialists answer their trained questions; the generalist answers **anything** (`instructions` + `criteria`, truly read by the model). The `model` field always names the actual responder.
 
-```json
-{"model": "sabaki-mini", "answers": {
-  "department": {"type": "choice", "choice": "billing",
-    "probabilities": {"billing": 0.43}, "confidence": 0.43}}}
-```
+## Benchmarks (typed-decisions, test splits)
 
-You define the questions **and** the answer types: `choice` (options),
-`score` (ordered levels), `noul` (yes/no probability). New schemas need no
-retraining — just different questions, like Laya's option scorer.
-The server answers any question name with the plugin's primary question
-(Jev-style: ask `department`, get the `category` decision).
+| system | score | params | CPU | note |
+|---|---|---|---|---|
+| OpenDecider-nano | 0.796 | 400M | GPU | fine-tuned, published |
+| Laya typed-decisions | 0.766 | 421M | ~25 s/state ❌ | fine-tuned, published |
+| TypeSafe Jev | 0.754 | API | API only | zero-shot, published |
+| **sabaki mini** | **0.69** | 22M int8 | **~20 ms** | ECE < 0.14, healthy OOD doubt |
+| **sabaki nano** | **0.61** | ~0 | **<1 ms** | zero deps, ~18k req/s |
+| **sabaki generalist** | 0.56 | 22M | ~20-36 ms | ep0, training in progress |
+| Laya base | 0.362 | 421M | GPU | zero-shot, published |
 
-### Automatic classification (act on confidence)
+A few points less for **1000× lower latency**: nano ~18 000 req/s, mini ~71 req/s (1 thread) — a 35 Hz game tick fits on any CPU. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom): the same stack exits MAP01 end-to-end (video in repo).
 
-```ts
-import { Sabaki } from "sabaki";
-const r = await sabaki.decideAsync({ state: ticket });
-if (r.domain !== "unknown" && r.confidence > 0.8) {
-  await autoRoute(r); // calibrated confidences make this safe
-} else {
-  await escalateToHuman(r); // unsure cases go to a person
-}
-```
-
-## Benchmarks (typed-decisions, test split)
-
-Our `nano` plugins vs published reference scores (same dataset, all questions):
-
-| system | score | params | note |
-|---|---|---|---|
-| OpenDecider-nano | 0.796 | 400M | fine-tuned, published |
-| TypeSafe Jev | 0.754 | API | zero-shot, published |
-| Laya typed-decisions | 0.766 | 421M | fine-tuned, published |
-| **sabaki mini** | **0.636 / 0.686** | 22M / 90M | int8 / fp32 ONNX, mean over 4 workflows, CPU ~70 req/s |
-| **sabaki nano** | **0.611** | ~0 | mean over 4 workflows (0.686 / 0.650 / 0.686 / 0.422) |
-| Laya base | 0.362 | 421M | zero-shot, published |
-
-
-### `mini` (MiniLM ONNX int8, ~22 MB) vs published references
-
-| workflow | sabaki mini fp32 | sabaki mini int8 | OpenDecider-nano | Laya-td | Jev |
-|---|---|---|---|---|---|
-| customer_service | 0.670 | 0.656 | — | — | — |
-| invoice_processing | 0.654 | 0.556 | — | — | — |
-| security_incidents | 0.716 | 0.686 | — | — | — |
-| agent_trace | 0.702 | 0.648 | — | — | — |
-| **mean** | **0.686** | **0.636** | 0.796 | 0.766 | 0.754 |
-
-Calibrated (ECE < 0.14, temperature-scaled) with healthy doubt on
-out-of-distribution inputs — the property that makes confident automation safe.
-
-### Why `mini` instead of a 400M+ model
-
-Same test splits, but a different operating point: ~22 MB int8, ~20 ms on
-desktop CPU, zero dependencies beyond `onnxruntime-node`, no GPU, no API key,
-no per-call cost. The 400M+ references need a GPU to be usable — Laya's ONNX
-export was evaluated for CPU use and disqualified (~25 s/state). For
-high-frequency decisions (a game tick, a triage queue), latency and cost
-dominate accuracy past ~0.7: `mini` answers 1000× faster than a GPU-bound
-model for a few points less. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom):
-the same `mini` stack plays MAP01 end-to-end on CPU (video in repo).
-
-Measured throughput (1 thread, `bench_throughput.mjs`): `nano` ~18 000 req/s
-(i5) / ~12 000 (Xeon); `mini` ~71 req/s (i5) / ~73 (Xeon) — a 35 Hz game tick
-fits in real time on any CPU.
-
-Honest reading: our kilobyte models sit between Laya-base and the fine-tuned
-400M+ models — expected for word-count linear models. The `mini` (MiniLM)
-models narrow the gap (mean ~0.69, ECE < 0.14). See GUIDE for methodology.
-
-Start with the [GUIDE](https://github.com/sabaki-js/sabaki/blob/main/GUIDE.md). All packages signed via npm trusted publishing (provenance).
+Mail bucket8: nano **0.865** anonymized (0 PII). All packages via npm trusted publishing (provenance). MIT.
