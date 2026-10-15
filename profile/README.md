@@ -35,12 +35,12 @@ Live: `https://sabaki.fox3000foxy.com/v1/systemone` — try the [GUIDE](https://
 
 ```mermaid
 flowchart LR
-    A[state + questions] --> B{route()\nkeyword score\n>= threshold?}
-    B -- specialist wins --> C[nano <1ms\nor mini ~20ms]
-    B -- unknown --> D[generalist fallback\nruntime-defined questions]
-    C --> E["Jev answers\nchoice / score / noul"]
+    A["state + questions"] --> B["route: keyword score,<br/>specialist or unknown"]
+    B -- specialist wins --> C["nano under 1ms<br/>or mini about 20ms"]
+    B -- unknown --> D["generalist fallback<br/>runtime-defined questions"]
+    C --> E["Jev answers<br/>choice, score, noul"]
     D --> E
-    E --> F["/v1/systemone\n{model, answers, usage}"]
+    E --> F["POST /v1/systemone<br/>model, answers, usage"]
 ```
 
 Specialists answer their trained questions; the generalist answers **anything** (`instructions` + `criteria`, truly read by the model). The `model` field always names the actual responder.
