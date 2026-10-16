@@ -59,9 +59,9 @@ Specialists answer their trained questions; the generalist answers **anything** 
 
 \* the generalist is **not** scored on the typed-decisions test split here: 0.848 is its own mix validation (internal), so it is *not* directly comparable to the rows above.
 
-### Same-size open decision models (144–151M, CPU)
+### Sabaki is the smallest here: larger open decision models (144–151M, CPU), for reference
 
-Small open models doing the same job, for reference. Figures are **self-reported** by their authors unless noted; protocols and splits differ, so read the source before comparing.
+sabaki generalist is **22.7M** — about **6.5× smaller** than the smallest model below, and the smallest *general-purpose* decision model in this list (Cua-S1's 706K scorer is smaller but form-specific). Figures below are **self-reported** by their authors unless noted; protocols and splits differ.
 
 | model | params | languages | notes | source |
 |---|---|---|---|---|
