@@ -57,7 +57,7 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | **sabaki generalist** | 0.848* | 22M | ~20-36 ms | mix val v4, phishing 0.955 |
 | Laya base | 0.362 | 421M | GPU | zero-shot, published |
 
-\* the generalist is **not** scored on the typed-decisions test split here: 0.848 is its own mix validation (internal), so it is *not* directly comparable to the rows above.
+\* the generalist is a **22.7M** model **not trained for this benchmark**: on the typed-decisions **test split** it scores **0.29** (near chance). The 0.848 is its own mix validation (internal). Its job is fast typed decisions on its own distribution, not this benchmark — so it is *not* comparable to the rows above.
 
 ### Sabaki is the smallest here: larger open decision models (144–151M, CPU), for reference
 
