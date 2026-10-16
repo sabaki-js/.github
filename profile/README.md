@@ -54,8 +54,23 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | TypeSafe Jev | 0.754 | API | API only | zero-shot, published |
 | **sabaki mini** | **0.69** | 22M int8 | **~20 ms** | ECE < 0.14, healthy OOD doubt |
 | **sabaki nano** | **0.61** | ~0 | **<1 ms** | zero deps, ~18k req/s |
-| **sabaki generalist** | 0.848 | 22M | ~20-36 ms | mix val v4, phishing 0.955 |
+| **sabaki generalist** | 0.848* | 22M | ~20-36 ms | mix val v4, phishing 0.955 |
 | Laya base | 0.362 | 421M | GPU | zero-shot, published |
+
+\* the generalist is **not** scored on the typed-decisions test split here: 0.848 is its own mix validation (internal), so it is *not* directly comparable to the rows above.
+
+### Same-size open decision models (144–151M, CPU)
+
+Small open models doing the same job, for reference. Figures are **self-reported** by their authors unless noted; protocols and splits differ, so read the source before comparing.
+
+| model | params | languages | notes | source |
+|---|---|---|---|---|
+| openJev-verdict-2.0 | 151M (ModernBERT) | en | claims the top spot over Jev and Laya on the LocalLLaMA typed-decisions benchmark (self-reported) | [GitHub](https://github.com/Heman10x-NGU/openJev-verdict-2.0) |
+| julia-1 | 144M (mmBERT-small) | **multilingual** | CPU, `choice`/`score`/`noul` with probabilities | [HF](https://huggingface.co/SupersonicLabs/Julia-1) |
+| Open Jev | 150M (ModernBERT) | en | per-request decisions in one pass; trains on a Colab T4 in ~30 min | [GitHub](https://github.com/intikhab49/open-jev-typed-decision-engine) |
+| Phocinae / Largha-150M | 144M (mmBERT-small) | en + zh | calibrated, robust to option reordering | [GitHub](https://github.com/Phocinae/Phocinae-Largha-150M-v1) |
+| WaterSheep | ModernBERT-base | en | reports 61.2% accuracy, 0.043 ECE on unseen data (self) | [GitHub](https://github.com/SamratDuttaOfficial/WaterSheep) |
+| Vela | 0.3B–9B | 17 languages | ONNX + Core ML, router-oriented | [HF](https://huggingface.co/vllm-sr/Vela-2.0-0.3B) |
 
 A few points less for **1000× lower latency**: nano ~18 000 req/s, mini ~71 req/s (1 thread) - a 35 Hz game tick fits on any CPU. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom): the same stack exits MAP01 end-to-end (video in repo).
 
