@@ -54,7 +54,7 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | TypeSafe Jev | 0.754 | API | API only | zero-shot, published |
 | **sabaki mini** | **0.69** | 22M int8 | **~20 ms** | ECE < 0.14, healthy OOD doubt |
 | **sabaki nano** | **0.61** | ~0 | **<1 ms** | zero deps, ~18k req/s |
-| **sabaki generalist** | 0.56 | 22M | ~20-36 ms | ep0, training in progress |
+| **sabaki generalist** | 0.848 | 22M | ~20-36 ms | mix val v4, phishing 0.955 |
 | Laya base | 0.362 | 421M | GPU | zero-shot, published |
 
 A few points less for **1000× lower latency**: nano ~18 000 req/s, mini ~71 req/s (1 thread) - a 35 Hz game tick fits on any CPU. See [@sabaki-js/doom](https://github.com/sabaki-js/plugin-doom): the same stack exits MAP01 end-to-end (video in repo).
