@@ -15,7 +15,7 @@ await sabaki.decideAsync({ state: "Invoice charged twice, need a refund", questi
 // { decision: "billing", confidence: 0.89, domain: "mail", plugin: "@sabaki-js/mail" }
 ```
 
-Live: `https://sabaki.fox3000foxy.com/v1/systemone` - try the [GUIDE](https://github.com/sabaki-js/sabaki/blob/main/GUIDE.md).
+Live: `https://sabaki.fox3000foxy.com/v1/systemone` - or self-host in one line: `await sabaki.serve({ port: 8000 })`. See the [GUIDE](https://github.com/sabaki-js/sabaki/blob/main/GUIDE.md).
 
 ## Packages
 
