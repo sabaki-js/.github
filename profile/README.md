@@ -59,6 +59,18 @@ Specialists answer their trained questions; the generalist answers **anything** 
 
 \* the generalist is a **22.7M** model **not trained for this benchmark**: on the typed-decisions **test split** it scores **0.29** (near chance). The 0.848 is its own mix validation (internal). Its job is fast typed decisions on its own distribution, not this benchmark — so it is *not* comparable to the rows above.
 
+### Generalist generations (preliminary)
+
+| generation | mix val* | PhishNChips recall | typed-decisions test |
+|---|---|---|---|
+| v4 (served) | 0.848 | R=0.026 | 0.29 |
+| v5 | 0.838 | R=0.066 | — |
+| A (22M, 80k) | 0.898 | R=0.406 | 0.546 |
+| A0 ep0 (22M, full) | 0.712 | R=0.422 | 0.32† |
+| B ep0 (144M, 80k) | 0.690 | R=0.046 | — |
+
+\* own split per run (not comparable across rows). PhishNChips (2,000 held-out emails) and the typed-decisions test split are identical for every row. †n=200 subset.
+
 ### Sabaki is the smallest here: larger open decision models (144–151M, CPU), for reference
 
 sabaki generalist is **22.7M** — about **6.5× smaller** than the smallest model below, and the smallest *general-purpose* decision model in this list (Cua-S1's 706K scorer is smaller but form-specific). Figures below are **self-reported** by their authors unless noted; protocols and splits differ.
