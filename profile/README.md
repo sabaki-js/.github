@@ -54,7 +54,7 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | TypeSafe Jev | 0.754 | API | API only | zero-shot, published |
 | **sabaki mini** | **0.69** | 22M int8 | **~20 ms** | ECE < 0.14, healthy OOD doubt |
 | **sabaki nano** | **0.61** | ~0 | **<1 ms** | zero deps, ~18k req/s |
-| **sabaki generalist (mini)** | 0.756 | 22M | ~20-36 ms | served; phishing R=0.616, td 0.536 |
+| **sabaki generalist (mini v1.0.0)** | 0.756 | 22M | ~20-36 ms | served; phishing R=0.616, td 0.536 |
 | Laya base | 0.362 | 421M | GPU | zero-shot, published |
 
 \* the served generalist (**mini**, 22.7M) scores **0.536** on the typed-decisions **test split** (vs 0.29 for v4) plus phishing recall 0.616 on 2,000 held-out emails — measured, preliminary, improving.
@@ -66,7 +66,7 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | v4 | 0.848 | R=0.026 | 0.29 |
 | v5 | 0.838 | R=0.066 | — |
 | A (22M, 80k) | 0.898 | R=0.406 | 0.546 |
-| **mini (served)** | 0.756 | R=0.616 | 0.536 |
+| **mini v1.0.0 (served)** | 0.756 | R=0.616 | 0.536 |
 | B (144M, 80k, scratch) | 0.692 | R=0.062 | 0.568 |
 
 \* own split per run (not comparable across rows). PhishNChips (2,000 held-out emails) and the typed-decisions test split are identical for every row. †n=200 subset.
