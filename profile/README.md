@@ -67,7 +67,7 @@ Specialists answer their trained questions; the generalist answers **anything** 
 | v5 | 0.838 | R=0.066 | — |
 | A (22M, 80k) | 0.898 | R=0.406 | 0.546 |
 | A0 (22M, full, scratch) | 0.756 | R=0.616 | 0.536 |
-| B ep0 (144M, 80k) | 0.690 | R=0.046 | — |
+| B (144M, 80k, scratch) | 0.692 | R=0.062 | 0.568 |
 
 \* own split per run (not comparable across rows). PhishNChips (2,000 held-out emails) and the typed-decisions test split are identical for every row. †n=200 subset.
 
